@@ -1,94 +1,72 @@
-import { Form, Input, Button, Select, Typography, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import AddPage, { FormField } from '../../components/AddPage/AddPage';
 import axios from '../../utils/axiosInstance';
-import styles from './AddTeacher.module.css';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import useClearErrorOnRouteChange from '../../hooks/useClearErrorOnRouteChange';
 
-const { Title } = Typography;
-const { Option } = Select;
+const fields: FormField[] = [
+  {
+    label: 'Name',
+    name: 'name',
+    type: 'input',
+    placeholder: 'Name',
+    rules: [{ required: true, message: 'Please enter name' }],
+  },
+  {
+    label: 'Subject',
+    name: 'subject',
+    type: 'select',
+    placeholder: 'Select a subject',
+    rules: [{ required: true, message: 'Please select subject' }],
+    options: [
+      'English Language',
+      'Mother Tongue Language',
+      'Mathematics',
+      'Science',
+      'Art',
+      'Music',
+      'Physical Education',
+      'Social Studies',
+      'Character and Citizenship Education',
+    ].map((subject) => ({ label: subject, value: subject })),
+  },
+  {
+    label: 'Email Address',
+    name: 'email',
+    type: 'input',
+    inputType: 'email',
+    placeholder: 'Email address',
+    rules: [
+      { required: true, message: 'Please enter email address' },
+      { type: 'email', message: 'This email address is invalid.' },
+    ],
+  },
+  {
+    label: 'Work Contact Number',
+    name: 'contactNumber',
+    type: 'input',
+    placeholder: 'Work contact number',
+    rules: [
+      { required: true, message: 'Please enter contact number' },
+      { pattern: /^\d{8}$/, message: 'This work contact number is invalid.' },
+    ],
+  },
+];
 
 const AddTeacher = () => {
-  const [form] = Form.useForm();
-  const navigate = useNavigate();
+  useClearErrorOnRouteChange();
 
-  const handleSubmit = async (values: any) => {
-    try {
-      const res = await axios.post('/teachers', values);
-      message.success('Teacher added successfully!');
-      navigate('/'); // redirect to teacher list
-    } catch (err) {
-      console.error(err);
-      message.error('Failed to add teacher. Please try again.');
-    }
+  const handleSubmit = async (values: any): Promise<void> => {
+    await axios.post('/teachers', values);
   };
 
   return (
-    <div className={styles.container}>
-      <Title level={3} className={styles.title}>Add Teacher</Title>
-
-      <div className={styles.card}>
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-          requiredMark={false}
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: 'Please enter name' }]}
-          >
-            <Input placeholder="Name" className={styles.input} />
-          </Form.Item>
-
-          <Form.Item
-            label="Subject"
-            name="subject"
-            rules={[{ required: true, message: 'Please select a subject' }]}
-          >
-            <Select placeholder="Select a subject" className={styles.input}>
-              <Option value="Math">Math</Option>
-              <Option value="Science">Science</Option>
-              <Option value="English">English Language</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            label="Email Address"
-            name="email"
-            rules={[
-              { required: true, message: 'Please enter email address' },
-              { type: 'email', message: 'This email address is invalid.' },
-            ]}
-          >
-            <Input placeholder="Email address" className={styles.input} />
-          </Form.Item>
-
-          <Form.Item
-            label="Work Contact Number"
-            name="contactNumber"
-            rules={[
-              { required: true, message: 'Please enter contact number' },
-              {
-                pattern: /^\d{8}$/,
-                message: 'This work contact number is invalid.',
-              },
-            ]}
-          >
-            <Input placeholder="Work contact number" className={styles.input} />
-          </Form.Item>
-        </Form>
-      </div>
-
-      <div className={styles.footerActions}>
-        <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/')} className={styles.backButton}>
-          Back
-        </Button>
-        <Button type="primary" onClick={() => form.submit()} className={styles.submitButton}>
-          Add Teacher
-        </Button>
-      </div>
-    </div>
+    <AddPage
+      title="Teacher"
+      fields={fields}
+      onSubmit={handleSubmit}
+      backLink="/"
+      submitLabel="Add Teacher"
+    />
   );
 };
 

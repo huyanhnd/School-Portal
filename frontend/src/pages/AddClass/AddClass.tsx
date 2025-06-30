@@ -1,51 +1,78 @@
-import { Form, Input, Button, Select, message, Typography } from 'antd';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-const { Title } = Typography;
-const { Option } = Select;
+import { Typography } from 'antd';
+import AddPage, { FormField } from '../../components/AddPage/AddPage';
+import axios from '../../utils/axiosInstance';
+import useClearErrorOnRouteChange from '../../hooks/useClearErrorOnRouteChange';
 
 const AddClass = () => {
-  const [form] = Form.useForm();
-  const [teachers, setTeachers] = useState([]);
-  const navigate = useNavigate();
+  useClearErrorOnRouteChange();
+
+  const [teacherOptions, setTeacherOptions] = useState<{ label: string; value: string }[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('http://localhost:3001/api/teachers').then(res => {
-      setTeachers(res.data.data);
-    });
+    axios.get('/teachers')
+      .then((res) => {
+        const options = res.data.data.map((teacher: any) => ({
+          label: teacher.name,
+          value: teacher.email,
+        }));
+        setTeacherOptions(options);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
-  const onFinish = (values: any) => {
-    axios.post('http://localhost:3001/api/classes', values)
-      .then(() => {
-        message.success('Class added successfully');
-        navigate('/classes');
-      })
-      .catch((err) => {
-        message.error(err.response?.data?.error || 'Failed to add class');
-      });
+  const fields: FormField[] = [
+    {
+      label: 'Class Level',
+      name: 'level',
+      type: 'select',
+      placeholder: 'Select a level',
+      rules: [{ required: true, message: 'Please select class level' }],
+      options: [
+        'Primary 1', 'Primary 2', 'Primary 3',
+        'Primary 4', 'Primary 5', 'Primary 6',
+      ].map((level) => ({ label: level, value: level })),
+    },
+    {
+      label: 'Class Name',
+      name: 'name',
+      type: 'input',
+      placeholder: 'Class name',
+      rules: [{ required: true, message: 'Please enter class name' }],
+    },
+    {
+      label: 'Form Teacher',
+      name: 'teacherEmail',
+      type: 'select',
+      placeholder: 'Assign a form teacher',
+      rules: [{ required: true, message: 'Please select a form teacher' }],
+      options: teacherOptions.length > 0
+        ? teacherOptions
+        : [{
+          label: (
+            <Typography.Text type="secondary">
+              No existing teachers. <a href="/add-teacher">Add a teacher</a>
+            </Typography.Text>
+          ),
+          value: '',
+        }],
+    },
+  ];
+
+  const handleSubmit = async (values: any): Promise<void> => {
+    await axios.post('/classes', values);
   };
 
   return (
-    <div style={{ padding: 36, maxWidth: 480 }}>
-      <Title level={3}>Add Class</Title>
-      <Form layout="vertical" form={form} onFinish={onFinish}>
-        <Form.Item name="level" label="Class Level" rules={[{ required: true }]}> <Input placeholder="e.g. Primary 1" /> </Form.Item>
-        <Form.Item name="name" label="Class Name" rules={[{ required: true }]}> <Input placeholder="e.g. Class 1A" /> </Form.Item>
-        <Form.Item name="teacherEmail" label="Form Teacher" rules={[{ required: true }]}> 
-          <Select placeholder="Select a teacher">
-            {teachers.map((t: any) => (
-              <Option key={t.email} value={t.email}>{t.name} ({t.email})</Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit">Submit</Button>
-        </Form.Item>
-      </Form>
-    </div>
+    <AddPage
+      title="Class"
+      fields={fields}
+      onSubmit={handleSubmit}
+      backLink="/classes"
+      submitLabel="Add Class"
+    />
   );
 };
 

@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Table, Button, Typography, Spin } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import axios from '../../utils/axiosInstance';
-import styles from './Teachers.module.css';
-
-const { Title } = Typography;
+import ListPage from '../../components/ListPage/ListPage';
+import useClearErrorOnRouteChange from '../../hooks/useClearErrorOnRouteChange';
 
 interface Teacher {
   name: string;
@@ -14,60 +11,48 @@ interface Teacher {
 }
 
 const Teachers = () => {
+  useClearErrorOnRouteChange();
+
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios.get('/teachers')
       .then(res => setTeachers(res.data.data))
-      .catch(err => console.error(err))
+      .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  const formatPhone = (phone: string): string =>
+    phone ? phone.replace(/(\d{4})(\d{4})/, '$1 $2') : '-';
 
   const columns = [
     { title: '#', dataIndex: 'key' },
     { title: 'Name', dataIndex: 'name' },
     { title: 'Subject', dataIndex: 'subject' },
     { title: 'Email', dataIndex: 'email' },
-    { title: 'Work Contact', dataIndex: 'contactNumber' },
+    {
+      title: 'Work Contact',
+      dataIndex: 'contactNumber',
+      render: formatPhone,
+    },
   ];
 
   const data = teachers.map((t, i) => ({
     key: i + 1,
-    name: t.name,
-    subject: t.subject,
-    email: t.email,
-    contactNumber: t.contactNumber,
+    ...t,
   }));
 
-  if (loading) {
-    return <Spin className={styles.loading} />;
-  }
-
   return (
-    <div className={styles.container}>
-      <div className={styles.headerRow}>
-        <Title level={3} className={styles.title}>Teachers</Title>
-        <Button
-          type="primary"
-          href="/add-teacher"
-          className={styles.addButton}
-          icon={<PlusOutlined />}
-        >
-          Add Teacher
-        </Button>
-      </div>
-
-      <div className={styles.card}>
-        {teachers.length === 0 ? (
-          <div className={styles.emptyState}>
-            <p className={styles.emptyText}>There are no existing teachers yet.</p>
-          </div>
-        ) : (
-          <Table columns={columns} dataSource={data} pagination={false} bordered />
-        )}
-      </div>
-    </div>
+    <ListPage
+      title="Teachers"
+      model="Teacher"
+      data={data}
+      columns={columns}
+      loading={loading}
+      addLink="/add-teacher"
+      emptyMessage="There are no existing teachers yet."
+    />
   );
 };
 

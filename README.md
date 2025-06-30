@@ -1,16 +1,13 @@
-# 📘 School Portal
+# School Portal
 
-This is a simple web application for managing teachers and classes, built with **React** (frontend) and **Node.js/Express** (backend API).
+A full-stack web application to manage teachers and classes in a primary school setting.
 
----
+## 🧱 Tech Stack
 
-## 📦 Folder Structure
-
-```
-school-portal/
-├── client/           # React Frontend (TypeScript + Ant Design)
-└── server/           # Express API (with Swagger docs)
-```
+- **Frontend**: React + TypeScript + Ant Design
+- **Backend**: Node.js + Express + TypeScript + Sequelize
+- **Database**: PostgreSQL
+- **API Documentation**: Swagger UI
 
 ---
 
@@ -27,31 +24,80 @@ school-portal/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/huyanhnd/school-portal.git
-cd school-portal
+git clone <your-repo-url>
+cd <your-repo-folder>
 ```
 
----
+### 2. Install dependencies
 
-### 2. Run Backend API Server
+#### Backend:
 
 ```bash
-cd server
+cd backend
 npm install
+```
+
+#### Frontend:
+
+```bash
+cd ../frontend
+npm install
+```
+
+### 3. Start PostgreSQL (if not already)
+
+- **Windows**: PostgreSQL usually runs as a service after installation — no manual command needed.
+- **macOS** (Homebrew):
+
+```bash
+brew services start postgresql
+```
+
+- **Ubuntu/Linux**:
+
+```bash
+sudo service postgresql start
+```
+
+### 4. Setup database
+
+This project uses a PostgreSQL database. 
+To connect, open the `.env` file inside the `backend` directory and fill in following database infomation:
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=school_portal
+DB_USER=your_postgres_username
+DB_PASSWORD=your_postgres_password
+```
+
+> 💡 Replace `your_postgres_username` and `your_postgres_password` with your actual PostgreSQL credentials.
+
+Open postgres with cmd. 
+
+```bash
+"C:\Program Files\PostgreSQL\17\bin\psql.exe" -U postgres
+```
+
+Create sql database with:
+
+```bash
+createdb school_portal
+```
+
+### 5. Run the backend
+
+```bash
+cd backend
 npm run dev
 ```
 
-- Runs on: `http://localhost:3001`
-- Swagger docs: `http://localhost:3001/api-docs`
-
----
-
-### 3. Run Frontend React App
+### 6. Run the frontend
 
 ```bash
-cd ../client
-npm install
-npm run dev
+cd frontend
+npm start
 ```
 
 - Runs on: `http://localhost:3000`
@@ -60,7 +106,57 @@ npm run dev
 
 ---
 
-## 📋 API Design (Suggestions)
+### 🔍 API Documentation (Swagger UI)
+
+Once the backend is running, you can explore and test all available API endpoints using Swagger UI:
+
+👉 Open your browser and go to: [http://localhost:3001/api-docs](http://localhost:3001/api-docs)
+
+If you configured a different port or path, adjust the URL accordingly.
+
+---
+
+## 📁 Folder Structure
+
+```
+root/
+├── backend/
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── config/
+│   │   └── app.ts
+│   └── swagger/
+├── frontend/
+│   ├── src/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   └── utils/
+│   └── index.tsx
+```
+
+---
+
+## 📌 API Design Overview
+
+### Teachers
+
+| Method | Endpoint        | Description                |
+|--------|------------------|----------------------------|
+| POST   | `/api/teachers` | Create a new teacher       |
+| GET    | `/api/teachers` | Get list of all teachers   |
+
+### Classes
+
+| Method | Endpoint       | Description               |
+|--------|----------------|---------------------------|
+| POST   | `/api/classes` | Create a new class        |
+| GET    | `/api/classes` | Get list of all classes   |
+
+---
+
+## 📋 API Design 
 
 ### POST `/teachers`
 
@@ -90,6 +186,8 @@ npm run dev
 - Only **basic validation** is enforced on email and contact number.
 - No authentication is required for API access (public access assumed for demo).
 - All frontend routes are static and handled via `react-router`.
+- A teacher can only be a form teacher of one class.
+- Teacher's email is unique and used as a foreign key for class creation.
 
 ---
 

@@ -1,30 +1,55 @@
 import { useEffect, useState } from 'react';
-import { Table, Button, Typography } from 'antd';
-import axios from 'axios';
+import axios from '../../utils/axiosInstance';
+import ListPage from '../../components/ListPage/ListPage';
+import useClearErrorOnRouteChange from '../../hooks/useClearErrorOnRouteChange';
 
-const { Title } = Typography;
+interface ClassItem {
+  name: string;
+  level: string;
+  formTeacher: {
+    name: string;
+  };
+}
 
 const Classes = () => {
-  const [classes, setClasses] = useState([]);
+  useClearErrorOnRouteChange();
+
+  const [classes, setClasses] = useState<ClassItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('http://localhost:3001/api/classes').then(res => setClasses(res.data.data));
+    axios.get('/classes')
+      .then(res => setClasses(res.data.data))
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
   const columns = [
-    { title: 'Level', dataIndex: 'level' },
-    { title: 'Name', dataIndex: 'name' },
-    { title: 'Form Teacher', dataIndex: ['formTeacher', 'name'] },
+    { title: '#', dataIndex: 'key' },
+    { title: 'Class Level', dataIndex: 'level' },
+    { title: 'Class Name', dataIndex: 'name' },
+    {
+      title: 'Form Teacher',
+      dataIndex: 'formTeacher',
+      render: (formTeacher: any) => formTeacher?.name || '-',
+    },
   ];
 
+  const data = classes.map((c, i) => ({
+    key: i + 1,
+    ...c,
+  }));
+
   return (
-    <div style={{ padding: 36 }}>
-      <Title level={3}>Classes</Title>
-      <Button type="primary" href="/add-class" style={{ marginBottom: 16 }}>
-        + Add Class
-      </Button>
-      <Table columns={columns} dataSource={classes} rowKey={(r: any) => r.name} bordered />
-    </div>
+    <ListPage
+      title="Classes"
+      model="Class"
+      data={data}
+      columns={columns}
+      loading={loading}
+      addLink="/add-class"
+      emptyMessage="There are no existing classes yet."
+    />
   );
 };
 

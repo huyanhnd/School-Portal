@@ -1,0 +1,106 @@
+openapi: 3.0.0
+info:
+  title: School API
+  version: 1.0.0
+  description: API for managing teachers and classes
+
+servers:
+  - url: http://localhost:3001/api
+
+tags:
+  - name: Teachers
+    description: Manage teachers
+  - name: Classes
+    description: Manage classes
+
+paths:
+  /teachers:
+    get:
+      tags: [Teachers]
+      summary: Get all teachers
+      responses:
+        200:
+          description: List of teachers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Teacher'
+
+    post:
+      tags: [Teachers]
+      summary: Create a new teacher
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Teacher'
+      responses:
+        201:
+          description: Teacher created
+
+  /classes:
+    get:
+      tags: [Classes]
+      summary: Get all classes with teacher name
+      responses:
+        200:
+          description: List of classes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        level:
+                          type: string
+                        formTeacher:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+
+    post:
+      tags: [Classes]
+      summary: Create new class
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                level:
+                  type: string
+                teacherEmail:
+                  type: string
+      responses:
+        201:
+          description: Class created
+
+components:
+  schemas:
+    Teacher:
+      type: object
+      properties:
+        name:
+          type: string
+        subject:
+          type: string
+        email:
+          type: string
+        contactNumber:
+          type: string

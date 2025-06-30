@@ -18,7 +18,7 @@ const HeaderBar = () => {
       </div>
       <Menu
         mode="horizontal"
-        selectedKeys={[location.pathname]}
+        selectedKeys={['/', '/teachers', '/add-teacher'].includes(location.pathname) ? ['/'] : [location.pathname]}
         onClick={({ key }) => navigate(key)}
         className={styles.menu}
       >

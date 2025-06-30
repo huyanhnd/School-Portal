@@ -24,3 +24,15 @@
     border-bottom: none;
     font-weight: 600;
 }
+
+.menu :global(.ant-menu-item) {
+    color: #135BB4 !important;
+}
+
+.menu :global(.ant-menu-item-selected) {
+    color: #135BB4 !important;
+}
+
+.menu :global(.ant-menu-item:hover) {
+    color: #1890ff !important;
+}

@@ -4,62 +4,70 @@ import { Teacher } from '../models/Teacher';
 
 const router: Router = express.Router();
 
-/**
- * @swagger
- * /api/classes:
- *   get:
- *     summary: Get list of classes
- *     responses:
- *       200:
- *         description: List of classes with form teacher name
- */
+// GET /classes
 router.get('/', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const classes = await Class.findAll({
-      include: [{ model: Teacher, attributes: ['name'], as: 'formTeacher' }]
+      attributes: ['level', 'name'],
+      include: [
+        {
+          model: Teacher,
+          as: 'formTeacher',
+          attributes: ['name']
+        }
+      ]
     });
+
     res.status(200).json({ data: classes });
   } catch (err) {
     next(err);
   }
 });
 
-/**
- * @swagger
- * /api/classes:
- *   post:
- *     summary: Create new class
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               level:
- *                 type: string
- *               name:
- *                 type: string
- *               teacherEmail:
- *                 type: string
- *     responses:
- *       201:
- *         description: Class created
- */
+// POST /classes
 router.post('/', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { level, name, teacherEmail } = req.body;
 
-    const teacher = await Teacher.findOne({ where: { email: teacherEmail } });
-    if (!teacher) {
-      res.status(400).json({ error: 'Teacher not found' });
+    // Validate required fields
+    if (!level || !name || !teacherEmail) {
+      res.status(400).json({ error: 'All fields (level, name, teacherEmail) are required.' });
       return;
     }
 
-    const newClass = await Class.create({ level, name, teacherEmail });
-    res.status(201).json(newClass);
-  } catch (err) {
-    next(err);
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(teacherEmail)) {
+      res.status(400).json({ error: 'Invalid email format.' });
+      return;
+    }
+
+    // Check teacher exists
+    const teacher = await Teacher.findOne({ where: { email: teacherEmail } });
+    if (!teacher) {
+      res.status(400).json({ error: 'Teacher not found.' });
+      return;
+    }
+
+    const newClass = await Class.create({
+      level,
+      name,
+      formTeacherId: teacher.id
+    });
+
+    res.status(201).json({
+      data: {
+        level: newClass.level,
+        name: newClass.name,
+        formTeacher: { name: teacher.name }
+      }
+    });
+  } catch (err: any) {
+    if (err.name === 'SequelizeValidationError') {
+      res.status(400).json({ error: err.errors?.[0]?.message || 'Validation error.' });
+    } else {
+      next(err);
+    }
   }
 });
 
