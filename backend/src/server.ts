@@ -10,7 +10,7 @@ import YAML from 'yamljs';
 import path from 'path';
 
 const app = express();
-const swaggerDocument = YAML.load(path.join(__dirname, 'docs', 'swagger.yaml'));
+const swaggerDocument = YAML.load(path.join('src', 'docs', 'swagger.yaml'));
 
 app.use(cors());
 app.use(express.json());
