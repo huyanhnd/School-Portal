@@ -27,10 +27,6 @@ app.use('/api/classes', classRoutes_1.default);
 // Serve static frontend
 const publicPath = path_1.default.join(process.cwd(), 'public');
 app.use(express_1.default.static(publicPath));
-// Handle SPA (for React Router)
-app.get('*', (req, res) => {
-    res.sendFile(path_1.default.join(publicPath, 'index.html'));
-});
 // Error handling
 app.use((err, req, res, next) => {
     const status = err.status || 500;
