@@ -8,7 +8,7 @@ const useClearErrorOnRouteChange = () => {
 
   useEffect(() => {
     setError(null);
-  }, [location.pathname]);
+  }, [location.pathname, setError]);
 };
 
 export default useClearErrorOnRouteChange;

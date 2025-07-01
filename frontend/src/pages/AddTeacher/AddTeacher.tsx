@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import AddPage, { FormField } from '../../components/AddPage/AddPage';
 import axios from '../../utils/axiosInstance';
 import useClearErrorOnRouteChange from '../../hooks/useClearErrorOnRouteChange';

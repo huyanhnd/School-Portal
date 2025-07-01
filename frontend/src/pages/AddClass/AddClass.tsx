@@ -8,7 +8,7 @@ const AddClass = () => {
   useClearErrorOnRouteChange();
 
   const [teacherOptions, setTeacherOptions] = useState<{ label: string; value: string }[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     axios.get('/teachers')
