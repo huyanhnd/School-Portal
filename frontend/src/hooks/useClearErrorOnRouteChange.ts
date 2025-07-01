@@ -7,7 +7,7 @@ const useClearErrorOnRouteChange = () => {
   const { setError } = useError();
 
   useEffect(() => {
-    setError(null); // ✅ clear mỗi lần chuyển route
+    setError(null);
   }, [location.pathname]);
 };
 
