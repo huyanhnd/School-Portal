@@ -1,0 +1,9 @@
+{
+  "build": {
+    "cwd": "backend"
+  },
+  "start": {
+    "cmd": "npm run build && npm start",
+    "cwd": "backend"
+  }
+}
