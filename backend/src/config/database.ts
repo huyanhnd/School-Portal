@@ -17,7 +17,6 @@ if (process.env.DATABASE_URL) {
     logging: false,
   });
 } else {
-  // 👉 Dùng local
   sequelize = new Sequelize(
     process.env.DB_NAME || 'school_portal',
     process.env.DB_USER || 'postgres',
