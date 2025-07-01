@@ -29,11 +29,6 @@ app.use('/api/classes', classRoutes);
 const publicPath = path.join(process.cwd(), 'public');
 app.use(express.static(publicPath));
 
-// Handle SPA (for React Router)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(publicPath, 'index.html'));
-});
-
 // Error handling
 app.use((err: any, req: any, res: any, next: any) => {
   const status = err.status || 500;

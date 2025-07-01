@@ -1,9 +1,9 @@
-import axios from './axios';
+import axios from '../utils/axiosInstance';
 
-export const getTeachers = () => axios.get('/teachers');
-export const createTeacher = (teacher: {
-  name: string;
-  subject: string;
-  email: string;
-  contactNumber: string;
-}) => axios.post('/teachers', teacher);
+export const getAllTeachers = () => {
+  return axios.get('/teachers');
+};
+
+export const addTeacher = (data: any) => {
+  return axios.post('/teachers', data);
+};

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Typography } from 'antd';
+import { Typography, message } from 'antd';
 import AddPage, { FormField } from '../../components/AddPage/AddPage';
-import axios from '../../utils/axiosInstance';
 import useClearErrorOnRouteChange from '../../hooks/useClearErrorOnRouteChange';
+import { getAllTeachers } from '../../api/teacher';
+import { addClass } from '../../api/class';
 
 const AddClass = () => {
   useClearErrorOnRouteChange();
@@ -11,16 +12,23 @@ const AddClass = () => {
   const [, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('/teachers')
-      .then((res) => {
+    const fetchTeachers = async () => {
+      try {
+        const res = await getAllTeachers();
         const options = res.data.data.map((teacher: any) => ({
           label: teacher.name,
           value: teacher.email,
         }));
         setTeacherOptions(options);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+      } catch (err: any) {
+        const errorMsg = err.response?.data?.error || 'Failed to load teachers.';
+        message.error(errorMsg);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeachers();
   }, []);
 
   const fields: FormField[] = [
@@ -62,7 +70,13 @@ const AddClass = () => {
   ];
 
   const handleSubmit = async (values: any): Promise<void> => {
-    await axios.post('/classes', values);
+    try {
+      await addClass(values);
+      message.success('Class added successfully!');
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.error || 'Failed to add class.';
+      message.error(errorMsg);
+    }
   };
 
   return (

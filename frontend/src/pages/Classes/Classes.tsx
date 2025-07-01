@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import axios from '../../utils/axiosInstance';
 import ListPage from '../../components/ListPage/ListPage';
 import useClearErrorOnRouteChange from '../../hooks/useClearErrorOnRouteChange';
+import { getAllClasses } from '../../api/class';
+import { message } from 'antd';
 
 interface ClassItem {
   name: string;
@@ -18,10 +19,19 @@ const Classes = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('/classes')
-      .then(res => setClasses(res.data.data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    const fetchClasses = async () => {
+      try {
+        const res = await getAllClasses();
+        setClasses(res.data.data);
+      } catch (err: any) {
+        const errorMsg = err.response?.data?.error || 'Failed to load classes.';
+        message.error(errorMsg);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClasses();
   }, []);
 
   const columns = [

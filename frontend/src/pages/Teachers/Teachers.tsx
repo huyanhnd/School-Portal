@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import axios from '../../utils/axiosInstance';
 import ListPage from '../../components/ListPage/ListPage';
 import useClearErrorOnRouteChange from '../../hooks/useClearErrorOnRouteChange';
+import { getAllTeachers } from '../../api/teacher';
+import { message } from 'antd';
+import DOMPurify from 'dompurify';
 
 interface Teacher {
   name: string;
@@ -17,10 +19,21 @@ const Teachers = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('/teachers')
-      .then(res => setTeachers(res.data.data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    const fetchTeachers = async () => {
+      try {
+        const res = await getAllTeachers();
+        setTeachers(res.data.data);
+      } catch (err: any) {
+        const errorMsg =
+          err.response?.data?.error || 'Failed to load teachers.';
+        const safeError = DOMPurify.sanitize(errorMsg);
+        message.error(safeError);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeachers();
   }, []);
 
   const formatPhone = (phone: string): string =>
