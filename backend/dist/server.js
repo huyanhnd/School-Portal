@@ -18,7 +18,7 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 const swaggerDocument = yamljs_1.default.load(path_1.default.join('src', 'docs', 'swagger.yaml'));
 const corsOptions = {
-    origin: process.env.REACT_APP_API_URL || 'http://localhost:3000',
+    origin: process.env.REACT_APP_API_URL,
     credentials: true,
 };
 app.use((0, cors_1.default)(corsOptions));
@@ -29,7 +29,7 @@ app.use((req, res, next) => {
         "style-src 'self' 'unsafe-inline'; " +
         "img-src 'self' data:; " +
         "font-src 'self'; " +
-        `connect-src 'self' ${process.env.REACT_APP_API_URL || 'http://localhost:3000'};`);
+        `connect-src 'self' ${process.env.REACT_APP_API_URL};`);
     next();
 });
 app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocument));
@@ -46,7 +46,7 @@ const start = async () => {
             .catch(err => console.error("Unable to connect to DB:", err));
         await database_1.sequelize.sync({ alter: true });
         console.log('Database connected');
-        const PORT = process.env.PORT || 3001;
+        const PORT = process.env.PORT;
         app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`);
         });

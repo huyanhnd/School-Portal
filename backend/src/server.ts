@@ -16,7 +16,7 @@ const app = express();
 const swaggerDocument = YAML.load(path.join('src', 'docs', 'swagger.yaml'));
 
 const corsOptions = {
-  origin: process.env.REACT_APP_API_URL || 'http://localhost:3000',
+  origin: process.env.REACT_APP_API_URL,
   credentials: true,
 };
 
@@ -31,7 +31,7 @@ app.use((req, res, next) => {
     "style-src 'self' 'unsafe-inline'; " +
     "img-src 'self' data:; " +
     "font-src 'self'; " +
-    `connect-src 'self' ${process.env.REACT_APP_API_URL || 'http://localhost:3000'};`
+    `connect-src 'self' ${process.env.REACT_APP_API_URL};`
   );
   next();
 });
@@ -54,7 +54,7 @@ const start = async () => {
     await sequelize.sync({ alter: true });
     console.log('Database connected');
 
-    const PORT = process.env.PORT || 3001;
+    const PORT = process.env.PORT;
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
