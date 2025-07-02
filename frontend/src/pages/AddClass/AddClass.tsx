@@ -70,13 +70,7 @@ const AddClass = () => {
   ];
 
   const handleSubmit = async (values: any): Promise<void> => {
-    try {
-      await addClass(values);
-      message.success('Class added successfully!');
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.error || 'Failed to add class.';
-      message.error(errorMsg);
-    }
+    await addClass(values);
   };
 
   return (

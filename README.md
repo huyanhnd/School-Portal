@@ -2,12 +2,24 @@
 
 A full-stack web application to manage teachers and classes in a primary school setting.
 
-## 🧱 Tech Stack
+---
 
-- **Frontend**: React + TypeScript + Ant Design
-- **Backend**: Node.js + Express + TypeScript + Sequelize
-- **Database**: PostgreSQL
-- **API Documentation**: Swagger UI
+## 🌌 Deployed Demo
+
+* 🔗 **Frontend (React App)**:
+  [https://school-portal-tau-vert.vercel.app/](https://school-portal-tau-vert.vercel.app/)
+
+* 📊 **API Documentation (Swagger UI)**:
+  [https://school-portal-production-eed8.up.railway.app/api-docs](https://school-portal-production-eed8.up.railway.app/api-docs)
+
+---
+
+## 📊 Tech Stack
+
+* **Frontend**: React + TypeScript + Ant Design
+* **Backend**: Node.js + Express + TypeScript + Sequelize
+* **Database**: PostgreSQL
+* **API Documentation**: Swagger UI
 
 ---
 
@@ -15,11 +27,9 @@ A full-stack web application to manage teachers and classes in a primary school 
 
 ### Prerequisites
 
-- Node.js >= 18
-- npm or yarn
-- PostgreSQL
-
----
+* Node.js >= 18
+* npm or yarn
+* PostgreSQL
 
 ### 1. Clone the repository
 
@@ -44,16 +54,15 @@ cd ../frontend
 npm install
 ```
 
-### 3. Start PostgreSQL (if not already)
+### 3. Start PostgreSQL
 
-- **Windows**: PostgreSQL usually runs as a service after installation — no manual command needed.
-- **macOS** (Homebrew):
+* **macOS (Homebrew)**:
 
 ```bash
 brew services start postgresql
 ```
 
-- **Ubuntu/Linux**:
+* **Ubuntu/Linux**:
 
 ```bash
 sudo service postgresql start
@@ -61,8 +70,7 @@ sudo service postgresql start
 
 ### 4. Setup database
 
-This project uses a PostgreSQL database. 
-To connect, open the `.env` file inside the `backend` directory and fill in following database infomation:
+Open the `.env` file inside `backend` folder and fill in database credentials:
 
 ```env
 DB_HOST=localhost
@@ -72,15 +80,7 @@ DB_USER=your_postgres_username
 DB_PASSWORD=your_postgres_password
 ```
 
-> 💡 Replace `your_postgres_username` and `your_postgres_password` with your actual PostgreSQL credentials.
-
-Open postgres with cmd. 
-
-```bash
-"C:\Program Files\PostgreSQL\17\bin\psql.exe" -U postgres
-```
-
-Create sql database with:
+Create the database:
 
 ```bash
 createdb school_portal
@@ -93,6 +93,9 @@ cd backend
 npm run dev
 ```
 
+* Runs on: `http://localhost:3001`
+* Swagger: `http://localhost:3001/api-docs`
+
 ### 6. Run the frontend
 
 ```bash
@@ -100,19 +103,7 @@ cd frontend
 npm start
 ```
 
-- Runs on: `http://localhost:3000`
-
-> The frontend is configured to make API calls to `http://localhost:3001`.
-
----
-
-### 🔍 API Documentation (Swagger UI)
-
-Once the backend is running, you can explore and test all available API endpoints using Swagger UI:
-
-👉 Open your browser and go to: [http://localhost:3001/api-docs](http://localhost:3001/api-docs)
-
-If you configured a different port or path, adjust the URL accordingly.
+* Runs on: `http://localhost:3000`
 
 ---
 
@@ -138,63 +129,147 @@ root/
 
 ---
 
-## 📌 API Design Overview
+## 📐 Assumptions
 
-### Teachers
-
-| Method | Endpoint        | Description                |
-|--------|------------------|----------------------------|
-| POST   | `/api/teachers` | Create a new teacher       |
-| GET    | `/api/teachers` | Get list of all teachers   |
-
-### Classes
-
-| Method | Endpoint       | Description               |
-|--------|----------------|---------------------------|
-| POST   | `/api/classes` | Create a new class        |
-| GET    | `/api/classes` | Get list of all classes   |
-
----
-
-## 📋 API Design 
-
-### POST `/teachers`
-
-- **Purpose**: Add new teacher  
-- **Request Body**:
-
-```json
-{
-  "name": "string",
-  "subject": "string",
-  "email": "string",
-  "contactNumber": "string"
-}
-```
-
-- **Validation Rules**:
-  - Email must be a valid gov email (`@moe.edu.sg` / `@gov.sg`)
-  - Contact number must follow local format (e.g. 8 digits, start with 6/8/9)
-
-> Suggestion: Use a request schema validation library (e.g. Joi, Zod) for robustness.
-
----
-
-## 🔍 Assumptions
-
-- A **simple in-memory or local database** is used during development.
-- Only **basic validation** is enforced on email and contact number.
-- No authentication is required for API access (public access assumed for demo).
-- All frontend routes are static and handled via `react-router`.
-- A teacher can only be a form teacher of one class.
-- Teacher's email is unique and used as a foreign key for class creation.
+* No authentication or user roles implemented (public access).
+* Teachers are uniquely identified by their email addresses.
+* A teacher can only be the form teacher of **one** class.
+* The frontend uses static routing via `react-router-dom`.
+* PostgreSQL is used as the relational database.
 
 ---
 
 ## ✅ Features
 
-- Add, list teachers
-- Validation of input fields (frontend and backend)
-- Clean UI with Ant Design
-- Responsive layout and styled using CSS modules
-- Swagger API documentation
+* Add and view list of teachers
+* Add and view list of classes
+* Assign teacher to a class (one-to-one relationship)
+* Field validation on both frontend and backend
+* Simple, responsive UI built with Ant Design
+* Interactive Swagger UI for exploring API endpoints
+
+---
+
+## 🔍 API Overview
+
+### Teachers
+
+| Method | Endpoint        | Description               |
+| ------ | --------------- | ------------------------- |
+| POST   | `/api/teachers` | Create a new teacher      |
+| GET    | `/api/teachers` | Retrieve list of teachers |
+
+### Classes
+
+| Method | Endpoint       | Description              |
+| ------ | -------------- | ------------------------ |
+| POST   | `/api/classes` | Create a new class       |
+| GET    | `/api/classes` | Retrieve list of classes |
+
+---
+
+## 🔧 API Design Inputs / Suggestions
+
+### 1. Register a Teacher
+
+* **Endpoint**: `POST /api/teachers`
+* **Headers**: `Content-Type: application/json`
+* **Success Response**: HTTP 201
+* **Body Example**:
+
+```json
+{
+  "name": "Mary",
+  "subject": "Mathematics",
+  "email": "teachermary@gmail.com",
+  "contactNumber": "68129414"
+}
+```
+
+---
+
+### 2. Retrieve Teacher List
+
+* **Endpoint**: `GET /api/teachers`
+* **Success Response**: HTTP 200
+* **Response Example**:
+
+```json
+{
+  "data": [
+    {
+      "name": "Mary",
+      "subject": "Mathematics",
+      "email": "teachermary@gmail.com",
+      "contactNumber": "68129414"
+    },
+    {
+      "name": "Ken",
+      "subject": "Mother Tongue Language",
+      "email": "teacherken@gmail.com",
+      "contactNumber": "61824191"
+    }
+  ]
+}
+```
+
+---
+
+### 3. Add a Class with Form Teacher
+
+> Note: A teacher can only be the form teacher of **one** class.
+
+* **Endpoint**: `POST /api/classes`
+* **Headers**: `Content-Type: application/json`
+* **Success Response**: HTTP 201
+* **Body Example**:
+
+```json
+{
+  "level": "Primary 1",
+  "name": "Class 1A",
+  "teacherEmail": "teachermary@gmail.com"
+}
+```
+
+---
+
+### 4. Retrieve Class List
+
+* **Endpoint**: `GET /api/classes`
+* **Success Response**: HTTP 200
+* **Response Example**:
+
+```json
+{
+  "data": [
+    {
+      "level": "Primary 1",
+      "name": "Class 1A",
+      "formTeacher": {
+        "name": "Mary"
+      }
+    },
+    {
+      "level": "Primary 2",
+      "name": "Class 2B",
+      "formTeacher": {
+        "name": "Ken"
+      }
+    }
+  ]
+}
+```
+
+---
+
+### ⚠️ Error Handling
+
+All error responses should:
+
+* Use appropriate HTTP status codes (e.g. `400`)
+* Return a JSON body with error message:
+
+```json
+{ "error": "Some meaningful error message" }
+```

@@ -1,6 +1,7 @@
 import AddPage, { FormField } from '../../components/AddPage/AddPage';
 import axios from '../../utils/axiosInstance';
 import useClearErrorOnRouteChange from '../../hooks/useClearErrorOnRouteChange';
+import { addTeacher } from '../../api/teacher';
 
 const fields: FormField[] = [
   {
@@ -55,7 +56,7 @@ const AddTeacher = () => {
   useClearErrorOnRouteChange();
 
   const handleSubmit = async (values: any): Promise<void> => {
-    await axios.post('/teachers', values);
+    await addTeacher(values);
   };
 
   return (
