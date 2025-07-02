@@ -18,6 +18,7 @@ Class.init({
     formTeacherId: {
         type: sequelize_1.DataTypes.UUID,
         allowNull: false,
+        unique: true,
     },
 }, {
     sequelize: database_1.sequelize,

@@ -56,6 +56,13 @@ router.post('/', async (req: Request, res: Response, next: NextFunction): Promis
       return;
     }
 
+    const existingClass = await Class.findOne({ where: { formTeacherId: teacher.id } });
+    if (existingClass) {
+      console.warn('Teacher is already assigned as a form teacher:', teacher.email);
+      res.status(400).json({ error: 'This teacher is already assigned to a class.' });
+      return;
+    }
+
     const newClass = await Class.create({
       level,
       name,
