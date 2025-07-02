@@ -9,7 +9,7 @@ exports.Teacher = Teacher;
 Teacher.init({
     id: {
         type: sequelize_1.DataTypes.UUID,
-        defaultValue: sequelize_1.DataTypes.UUIDV4, // Auto-generate UUID
+        defaultValue: sequelize_1.DataTypes.UUIDV4,
         primaryKey: true,
     },
     name: { type: sequelize_1.DataTypes.STRING, allowNull: false },

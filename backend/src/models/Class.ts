@@ -4,10 +4,10 @@ import { ClassAttributes, ClassCreationAttributes } from '../types/Class';
 import { Teacher } from './Teacher';
 
 export class Class extends Model<ClassAttributes, ClassCreationAttributes> implements ClassAttributes {
-  public id!: string; // UUID
+  public id!: string;
   public name!: string;
   public level!: string;
-  public formTeacherId!: string; // UUID
+  public formTeacherId!: string;
 }
 
 Class.init({
@@ -28,7 +28,6 @@ Class.init({
   timestamps: false,
 });
 
-// relationship
 Class.belongsTo(Teacher, {
   foreignKey: 'formTeacherId',
   as: 'formTeacher'

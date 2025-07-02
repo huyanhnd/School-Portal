@@ -24,7 +24,6 @@ Class.init({
     tableName: 'Classes',
     timestamps: false,
 });
-// relationship
 Class.belongsTo(Teacher_1.Teacher, {
     foreignKey: 'formTeacherId',
     as: 'formTeacher'

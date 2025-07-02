@@ -3,7 +3,7 @@ import { sequelize } from '../config/database';
 import { TeacherAttributes, TeacherCreationAttributes } from '../types/Teacher';
 
 export class Teacher extends Model<TeacherAttributes, TeacherCreationAttributes> implements TeacherAttributes {
-  public id!: string; // UUID là string
+  public id!: string;
   public name!: string;
   public subject!: string;
   public email!: string;
@@ -13,7 +13,7 @@ export class Teacher extends Model<TeacherAttributes, TeacherCreationAttributes>
 Teacher.init({
   id: {
     type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,  // Auto-generate UUID
+    defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
   name: { type: DataTypes.STRING, allowNull: false },

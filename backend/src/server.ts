@@ -51,7 +51,7 @@ const start = async () => {
       .then(() => console.log("DB connected successfully!"))
       .catch(err => console.error("Unable to connect to DB:", err));
 
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     console.log('Database connected');
 
     const PORT = process.env.PORT;
