@@ -8,15 +8,23 @@ class Class extends sequelize_1.Model {
 }
 exports.Class = Class;
 Class.init({
-    id: { type: sequelize_1.DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+    id: {
+        type: sequelize_1.DataTypes.UUID,
+        defaultValue: sequelize_1.DataTypes.UUIDV4,
+        primaryKey: true,
+    },
     name: { type: sequelize_1.DataTypes.STRING, allowNull: false },
     level: { type: sequelize_1.DataTypes.STRING, allowNull: false },
-    formTeacherId: { type: sequelize_1.DataTypes.INTEGER, allowNull: false }
+    formTeacherId: {
+        type: sequelize_1.DataTypes.UUID,
+        allowNull: false,
+    },
 }, {
     sequelize: database_1.sequelize,
     tableName: 'Classes',
-    timestamps: false
+    timestamps: false,
 });
+// relationship
 Class.belongsTo(Teacher_1.Teacher, {
     foreignKey: 'formTeacherId',
     as: 'formTeacher'

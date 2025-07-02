@@ -1,8 +1,8 @@
 export interface ClassAttributes {
-    id: number;
-    name: string;
-    level: string;
-    formTeacherId: number;
+  id: string;
+  name: string;
+  level: string;
+  formTeacherId: string;
 }
 
-export interface ClassCreationAttributes extends Omit<ClassAttributes, 'id'> { }
+export interface ClassCreationAttributes extends Omit<ClassAttributes, 'id'> {}

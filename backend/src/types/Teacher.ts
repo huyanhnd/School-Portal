@@ -1,9 +1,9 @@
 export interface TeacherAttributes {
-    id: number;
-    name: string;
-    subject: string;
-    email: string;
-    contactNumber: string;
+  id: string;
+  name: string;
+  subject: string;
+  email: string;
+  contactNumber: string;
 }
 
-export interface TeacherCreationAttributes extends Omit<TeacherAttributes, 'id'> { }
+export interface TeacherCreationAttributes extends Omit<TeacherAttributes, 'id'> {}

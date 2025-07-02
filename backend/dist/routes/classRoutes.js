@@ -10,6 +10,7 @@ const router = express_1.default.Router();
 // GET /classes
 router.get('/', async (req, res, next) => {
     try {
+        console.log('[GET] /classes');
         const classes = await Class_1.Class.findAll({
             attributes: ['level', 'name'],
             include: [
@@ -20,30 +21,34 @@ router.get('/', async (req, res, next) => {
                 }
             ]
         });
+        console.log(`Fetched ${classes.length} classes`);
         res.status(200).json({ data: classes });
     }
     catch (err) {
+        console.error('Error fetching classes:', err);
         next(err);
     }
 });
 // POST /classes
 router.post('/', async (req, res, next) => {
     try {
+        console.log('[POST] /classes');
+        console.log('Request body:', req.body);
         const { level, name, teacherEmail } = req.body;
-        // Validate required fields
         if (!level || !name || !teacherEmail) {
+            console.warn('Missing required fields');
             res.status(400).json({ error: 'All fields (level, name, teacherEmail) are required.' });
             return;
         }
-        // Validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(teacherEmail)) {
+            console.warn('Invalid email format:', teacherEmail);
             res.status(400).json({ error: 'Invalid email format.' });
             return;
         }
-        // Check teacher exists
         const teacher = await Teacher_1.Teacher.findOne({ where: { email: teacherEmail } });
         if (!teacher) {
+            console.warn('Teacher not found for email:', teacherEmail);
             res.status(400).json({ error: 'Teacher not found.' });
             return;
         }
@@ -51,6 +56,12 @@ router.post('/', async (req, res, next) => {
             level,
             name,
             formTeacherId: teacher.id
+        });
+        console.log('New class created:', {
+            id: newClass.id,
+            level: newClass.level,
+            name: newClass.name,
+            formTeacherId: teacher.id,
         });
         res.status(201).json({
             data: {
@@ -61,6 +72,7 @@ router.post('/', async (req, res, next) => {
         });
     }
     catch (err) {
+        console.error('Error creating class:', err);
         if (err.name === 'SequelizeValidationError') {
             res.status(400).json({ error: err.errors?.[0]?.message || 'Validation error.' });
         }

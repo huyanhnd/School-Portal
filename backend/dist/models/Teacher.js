@@ -7,14 +7,18 @@ class Teacher extends sequelize_1.Model {
 }
 exports.Teacher = Teacher;
 Teacher.init({
-    id: { type: sequelize_1.DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+    id: {
+        type: sequelize_1.DataTypes.UUID,
+        defaultValue: sequelize_1.DataTypes.UUIDV4, // Auto-generate UUID
+        primaryKey: true,
+    },
     name: { type: sequelize_1.DataTypes.STRING, allowNull: false },
     subject: { type: sequelize_1.DataTypes.STRING, allowNull: false },
     email: { type: sequelize_1.DataTypes.STRING, allowNull: false, unique: true },
-    contactNumber: { type: sequelize_1.DataTypes.STRING, allowNull: false }
+    contactNumber: { type: sequelize_1.DataTypes.STRING, allowNull: false },
 }, {
     sequelize: database_1.sequelize,
     tableName: 'Teachers',
-    timestamps: false
+    timestamps: false,
 });
 //# sourceMappingURL=Teacher.js.map

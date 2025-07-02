@@ -6,6 +6,9 @@ info:
 
 servers:
   - url: http://localhost:3001/api
+    description: Development server
+  - url: https://school-portal-production-eed8.up.railway.app/api
+    description: Production server
 
 tags:
   - name: Teachers
