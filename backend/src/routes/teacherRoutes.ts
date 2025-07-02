@@ -6,7 +6,7 @@ const router: Router = express.Router();
 // GET /teachers
 router.get('/', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    console.log('[GET] /teachers'); // Log method + path
+    console.log('[GET] /teachers');
 
     const teachers = await Teacher.findAll({
       attributes: ['name', 'subject', 'email', 'contactNumber']

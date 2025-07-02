@@ -12,7 +12,7 @@ export interface FormField {
   name: string;
   type: 'input' | 'select';
   placeholder?: string;
-  inputType?: string; // e.g., 'email'
+  inputType?: string;
   options?: { label: ReactNode; value: string }[];
   rules?: any[];
 }

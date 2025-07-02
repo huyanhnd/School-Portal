@@ -1,29 +1,33 @@
 openapi: 3.0.0
 info:
-  title: School API
+  title: School Portal API
   version: 1.0.0
-  description: API for managing teachers and classes
+  description: |
+    API documentation for managing teachers and classes in a primary school setting.
+    This API provides endpoints to create and retrieve teachers and classes data.
 
 servers:
-  - url: http://localhost:3001/api
-    description: Development server
   - url: https://school-portal-production-eed8.up.railway.app/api
     description: Production server
+  - url: http://localhost:3001/api
+    description: Development server
 
 tags:
   - name: Teachers
-    description: Manage teachers
+    description: Operations related to teacher management
   - name: Classes
-    description: Manage classes
+    description: Operations related to class management
 
 paths:
   /teachers:
     get:
       tags: [Teachers]
       summary: Get all teachers
+      description: Retrieve a list of all teachers with their information
+      operationId: getTeachers
       responses:
         200:
-          description: List of teachers
+          description: Successfully retrieved teachers list
           content:
             application/json:
               schema:
@@ -32,28 +36,86 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Teacher'
+                      $ref: '#/components/schemas/TeacherResponse'
+                example:
+                  data:
+                    - name: "John Smith"
+                      subject: "Mathematics"
+                      email: "john.smith@example.com"
+                      contactNumber: "91234567"
+                    - name: "Mary Johnson"
+                      subject: "English Language"
+                      email: "mary.johnson@example.com"
+                      contactNumber: "81234567"
+        500:
+          $ref: '#/components/responses/InternalServerError'
 
     post:
       tags: [Teachers]
       summary: Create a new teacher
+      description: Add a new teacher to the system
+      operationId: createTeacher
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Teacher'
+              $ref: '#/components/schemas/TeacherCreationRequest'
+            example:
+              name: "Alice Williams"
+              subject: "Science"
+              email: "alice.williams@example.com"
+              contactNumber: "98765432"
       responses:
         201:
-          description: Teacher created
+          description: Teacher successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TeacherResponse'
+                example:
+                  data:
+                    name: "Alice Williams"
+                    subject: "Science"
+                    email: "alice.williams@example.com"
+                    contactNumber: "98765432"
+        400:
+          description: Bad request - validation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              examples:
+                MissingFields:
+                  summary: Missing required fields
+                  value:
+                    error: "All fields (name, subject, email, contactNumber) are required."
+                InvalidEmail:
+                  summary: Invalid email format
+                  value:
+                    error: "Invalid email format."
+                EmailExists:
+                  summary: Email already exists
+                  value:
+                    error: "Email already exists."
+        500:
+          $ref: '#/components/responses/InternalServerError'
 
   /classes:
     get:
       tags: [Classes]
-      summary: Get all classes with teacher name
+      summary: Get all classes
+      description: Retrieve a list of all classes with their form teacher information
+      operationId: getClasses
       responses:
         200:
-          description: List of classes
+          description: Successfully retrieved classes list
           content:
             application/json:
               schema:
@@ -62,48 +124,246 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                        level:
-                          type: string
-                        formTeacher:
-                          type: object
-                          properties:
-                            name:
-                              type: string
+                      $ref: '#/components/schemas/ClassResponse'
+                example:
+                  data:
+                    - name: "1A"
+                      level: "Primary 1"
+                      formTeacher:
+                        name: "John Smith"
+                    - name: "2B"
+                      level: "Primary 2"
+                      formTeacher:
+                        name: "Mary Johnson"
+        500:
+          $ref: '#/components/responses/InternalServerError'
 
     post:
       tags: [Classes]
-      summary: Create new class
+      summary: Create a new class
+      description: Add a new class to the system
+      operationId: createClass
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                level:
-                  type: string
-                teacherEmail:
-                  type: string
+              $ref: '#/components/schemas/ClassCreationRequest'
+            example:
+              name: "3C"
+              level: "Primary 3"
+              teacherEmail: "alice.williams@example.com"
       responses:
         201:
-          description: Class created
+          description: Class successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ClassResponse'
+                example:
+                  data:
+                    name: "3C"
+                    level: "Primary 3"
+                    formTeacher:
+                      name: "Alice Williams"
+        400:
+          description: Bad request - validation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              examples:
+                MissingFields:
+                  summary: Missing required fields
+                  value:
+                    error: "All fields (level, name, teacherEmail) are required."
+                InvalidEmail:
+                  summary: Invalid email format
+                  value:
+                    error: "Invalid email format."
+                TeacherNotFound:
+                  summary: Teacher not found
+                  value:
+                    error: "Teacher not found."
+                TeacherAlreadyAssigned:
+                  summary: Teacher already assigned to a class
+                  value:
+                    error: "This teacher is already assigned to a class."
+        500:
+          $ref: '#/components/responses/InternalServerError'
 
 components:
   schemas:
-    Teacher:
+    TeacherResponse:
       type: object
       properties:
         name:
           type: string
+          description: Full name of the teacher
+          example: "John Smith"
         subject:
           type: string
+          description: Subject taught by the teacher
+          example: "Mathematics"
         email:
           type: string
+          format: email
+          description: Email address of the teacher
+          example: "john.smith@example.com"
         contactNumber:
           type: string
+          description: Contact number of the teacher
+          pattern: '^[0-9]{8}$'
+          example: "91234567"
+      required:
+        - name
+        - subject
+        - email
+        - contactNumber
+
+    TeacherCreationRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Full name of the teacher
+          example: "John Smith"
+        subject:
+          type: string
+          description: Subject taught by the teacher
+          example: "Mathematics"
+          enum:
+            - English Language
+            - Mother Tongue Language
+            - Mathematics
+            - Science
+            - Art
+            - Music
+            - Physical Education
+            - Social Studies
+            - Character and Citizenship Education
+        email:
+          type: string
+          format: email
+          description: Email address of the teacher
+          example: "john.smith@example.com"
+        contactNumber:
+          type: string
+          description: Contact number of the teacher
+          pattern: '^[0-9]{8}$'
+          example: "91234567"
+      required:
+        - name
+        - subject
+        - email
+        - contactNumber
+
+    ClassResponse:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Class name (e.g., "1A", "2B")
+          example: "1A"
+        level:
+          type: string
+          description: Education level of the class
+          example: "Primary 1"
+          enum:
+            - Primary 1
+            - Primary 2
+            - Primary 3
+            - Primary 4
+            - Primary 5
+            - Primary 6
+        formTeacher:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Name of the form teacher
+              example: "John Smith"
+      required:
+        - name
+        - level
+        - formTeacher
+
+    ClassCreationRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Class name (e.g., "1A", "2B")
+          example: "1A"
+          pattern: '^[1-6][A-Z]$'
+        level:
+          type: string
+          description: Education level of the class
+          example: "Primary 1"
+          enum:
+            - Primary 1
+            - Primary 2
+            - Primary 3
+            - Primary 4
+            - Primary 5
+            - Primary 6
+        teacherEmail:
+          type: string
+          format: email
+          description: Email of the teacher to be assigned as form teacher
+          example: "john.smith@example.com"
+      required:
+        - name
+        - level
+        - teacherEmail
+
+  responses:
+    BadRequest:
+      description: Bad request - validation failed
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: Error message
+          examples:
+            MissingFields:
+              summary: Missing required fields
+              value:
+                error: "All fields are required."
+            InvalidEmail:
+              summary: Invalid email format
+              value:
+                error: "Invalid email format."
+            TeacherNotFound:
+              summary: Teacher not found
+              value:
+                error: "Teacher not found."
+            EmailExists:
+              summary: Email already exists
+              value:
+                error: "Email already exists."
+            TeacherAlreadyAssigned:
+              summary: Teacher already assigned to a class
+              value:
+                error: "This teacher is already assigned to a class."
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: Error message
+                example: "An unexpected error occurred."

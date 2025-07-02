@@ -1,6 +1,6 @@
 # School Portal
 
-A full-stack web application to manage teachers and classes in a primary school setting.
+A full-stack web application to manage teachers and classes for a school.
 
 ---
 
@@ -27,8 +27,8 @@ A full-stack web application to manage teachers and classes in a primary school 
 
 ### Prerequisites
 
-* Node.js >= 18
 * npm or yarn
+* Node.js
 * PostgreSQL
 
 ### 1. Clone the repository
@@ -113,18 +113,21 @@ npm start
 root/
 ├── backend/
 │   ├── src/
-│   │   ├── controllers/
+│   │   ├── config/
 │   │   ├── models/
 │   │   ├── routes/
-│   │   ├── config/
-│   │   └── app.ts
-│   └── swagger/
+│   │   ├── types/
+│   │   └── server.ts
 ├── frontend/
 │   ├── src/
-│   │   ├── pages/
+│   │   ├── api/
 │   │   ├── components/
+│   │   ├── contexts/
+│   │   ├── hooks/
+│   │   ├── pages/
 │   │   └── utils/
-│   └── index.tsx
+│   ├── index.tsx
+│   └── App.tsx
 ```
 
 ---
@@ -132,9 +135,7 @@ root/
 ## 📐 Assumptions
 
 * No authentication or user roles implemented (public access).
-* Teachers are uniquely identified by their email addresses.
 * A teacher can only be the form teacher of **one** class.
-* The frontend uses static routing via `react-router-dom`.
 * PostgreSQL is used as the relational database.
 
 ---
@@ -145,7 +146,7 @@ root/
 * Add and view list of classes
 * Assign teacher to a class (one-to-one relationship)
 * Field validation on both frontend and backend
-* Simple, responsive UI built with Ant Design
+* Simple UI built with Ant Design
 * Interactive Swagger UI for exploring API endpoints
 
 ---
